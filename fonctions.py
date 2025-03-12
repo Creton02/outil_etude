@@ -33,7 +33,7 @@ class MatiereEtude():
             json.dump(self.cote, file, indent=4)
             
 
-    def ecraser_cote(self):#à retravailler
+    def ecraser_cote(self):
         with open(self.save_file, "w") as file:
             file.write("{}")
         print(f"La sauvegarde à été écrasé!")
@@ -42,22 +42,16 @@ class MatiereEtude():
 
     def poser_question(self, index:int):
         print(f"{self.matiere.loc[index, "terme"]}")
-        input(f"      ---------       ")
+        input(f"---------")
         print(f"{self.matiere.loc[index, "definition"]}")
-        input(f"      ---------       ")
-        difficulte = 0
-        while difficulte not in range(1, 4):
+        input(f"---------")
+        condition_sortie = False
+        while condition_sortie == False:
             try:
-                difficulte = int(input(f"Facile (1), modéré (2), difficile (3) "))
+                difficulte = int(input(f"Facile (1), modéré (2), difficile (3), sortir (4) "))
             except ValueError:
                 difficulte = 3
-            match difficulte:
-                case "1":
-                    self.cote[index] = 2
-                case "2":
-                    self.cote[index] = 1
-                case "3":
-                    self.cote[index] = 0
+            condition_sortie = True
         if self.matiere.loc[index, "detail"] != '""':
             try:
                 choix = int(input(f"Plus de détail? (1) "))
@@ -65,13 +59,15 @@ class MatiereEtude():
                 choix = 0
             if choix == 1:
                 print(f"{self.matiere.loc[index, "detail"]}")
-        if self.matiere.loc[index, "exemple"] != '"':
+        if self.matiere.loc[index, "exemple"] != '""':
             try:
                 choix = int(input(f"Un exemple? (1) "))
             except ValueError:
                 choix = 2
             if choix == 1:
                 print(f"{self.matiere.loc[index, "exemple"]}")
+        return difficulte
+
     def __str__(self):
         affichage = ""
         for e in range(len(self.matiere)):
@@ -93,14 +89,33 @@ class Menu():
     def reviser_matiere(self):
         numero_revise = []
         for e in range(len(self.matiereetude.matiere.cote)):
-            if self.matiereetude.matiere.cote[e] == 0:
-                self.matiereetude.poser_question(e)
-            elif self.matiereetude.matiere.cote[e] == 1:
-                random = rd.randint(2)
+            if self.matiereetude.cote[e] == 0:
+                cote = self.matiereetude.poser_question(e)
+                match cote:
+                    case 1:
+                        self.matiereetude.cote[e] = 2
+                    case 2:
+                        self.matiereetude.cote[e] = 1
+                    case 3:
+                        self.matiereetude.cote[e] = 0
+                if cote == 4:
+                    self.matiereetude.save_cote()
+                    break
+            elif self.matiereetude.cote[e] == 1:
+                random = rd.randint(1, 2)
                 if random == 1:
-                    self.matiereetude.poser_question(e)
-
-        self.matiereetude.poser_question(2)
+                    cote = self.matiereetude.poser_question(e)
+                    match cote:
+                        case 1:
+                            self.matiereetude.cote[e] = 2
+                        case 2:
+                            self.matiereetude.cote[e] = 1
+                        case 3:
+                            self.matiereetude.cote[e] = 0
+                    if cote == 4:
+                        self.matiereetude.save_cote()
+                        break
+            self.matiereetude.save_cote()
 
 
     def menu_principal(self):
