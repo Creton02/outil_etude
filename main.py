@@ -83,7 +83,7 @@ class MatiereEtude():
 class Menu():
     def __init__(self, paths:list):
         self.paths = paths
-        self.matiereetude = MatiereEtude("feuille_note_biologie")
+        self.matiereetude = MatiereEtude(paths[0])
         atexit.register(self.matiereetude.save_cote)
 
 
@@ -162,7 +162,8 @@ class Menu():
     
 def main():
     
-    liste_paths = ["feuille_note_biologie"]
+    #liste_paths = ["feuille_note_biologie"]
+    liste_paths = ["evolution"]
     menu = Menu(liste_paths)
     menu.menu_principal()
     """biologie = MatiereEtude("feuille_note_biologie")
